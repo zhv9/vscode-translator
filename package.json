@@ -1,0 +1,64 @@
+{
+  "name": "vscode-translator",
+  "displayName": "vscode-translator",
+  "description": "translation extension for vs-code",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.37.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:extension.translate"
+  ],
+  "main": "./lib/index.js",
+  "contributes": {
+    "configurations": {
+      "type": "object",
+      "properties": {
+        "translator.toLang": {
+          "type": "string",
+          "default": "zh"
+        },
+        "translator.engines": {
+          "type": "array",
+          "default": [
+            "bing",
+            "ciba"
+          ]
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "extension.translate",
+        "title": "Translate"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn run compile"
+  },
+  "devDependencies": {
+    "@chemzqm/tsconfig": "^0.0.3",
+    "@chemzqm/tslint-config": "^1.0.18",
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^10.12.21",
+    "@types/vscode": "^1.37.0",
+    "glob": "^7.1.4",
+    "mocha": "^6.1.4",
+    "request-light": "^0.2.4",
+    "typescript": "^3.3.1",
+    "tslint": "^5.12.1",
+    "vscode-test": "^1.0.2",
+    "rimraf": "^2.6.3",
+    "ts-loader": "^6.0.4",
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.5"
+  }
+}
