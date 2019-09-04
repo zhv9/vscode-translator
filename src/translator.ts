@@ -1,6 +1,5 @@
 import { md5, request } from './util'
 import { Translation, SingleTranslation } from './types'
-import * as vscode from 'vscode'
 
 class Translator {
   constructor(public name: string) { }
@@ -48,8 +47,11 @@ export class BingTranslator extends Translator {
     // there is a blank here \] <\/span>
     const re = /<span class="ht_attr" lang=".*?">\[(.*?)\] <\/span>/g
     const match = re.exec(html)
-    if (match) { return match[1] }
-    else { return '' }
+    if (match) {
+      return match[1]
+    } else {
+      return ''
+    }
   }
 
   private getExplain(html: string): string[] {
@@ -140,7 +142,7 @@ export class GoogleTranslator extends Translator {
 
 // TODO: use non-standard api
 // e.g. https://github.com/voldikss/vim-translate-me/blob/41db2e5fed033e2be9b5c7458d7ae102a129643d/autoload/script/query.py#L264
-// currently not work, always get "errorCode:50"
+// currently it doesn't work, always get "errorCode:50"
 export class YoudaoTranslator extends Translator {
   constructor(name: string) { super(name) }
 
@@ -217,33 +219,4 @@ export class YoudaoTranslator extends Translator {
     }
     return explain
   }
-}
-
-export async function translate(text: string): Promise<Translation> {
-  const ENGINES = {
-    bing: BingTranslator,
-    ciba: CibaTranslator,
-    google: GoogleTranslator,
-    youdao: YoudaoTranslator
-  }
-
-  const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('translator')
-  const engines = config.get<string[]>('engines', ['ciba', 'google'])
-  const toLang = config.get<string>('toLang', 'zh')
-
-  const trans: Translation = {
-    text,
-    results: [],
-    status: 0  // 0 represents failure
-  }
-  for (const e of engines) {
-    const cls = ENGINES[e]
-    const translator = new cls(e)
-    const result = await translator.translate(text, toLang)
-    if (result) {
-      trans.status = 1 // if only one is valid, the whole status is valid
-      trans.results.push(result)
-    }
-  }
-  return trans
 }

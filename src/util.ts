@@ -24,8 +24,7 @@ export async function request(
   let post_data: string = null
   if (type === 'POST') {
     post_data = JSON.stringify(data)
-  }
-  else if (data) {
+  } else if (data) {
     url = url + '?' + urlencode(data)
   }
 
@@ -44,12 +43,10 @@ export async function request(
     let { responseText } = response
     if (responseType === 'json') {
       return JSON.parse(responseText)
-    }
-    else {
+    } else {
       return responseText
     }
-  }
-  catch (e) {
+  } catch (e) {
     // showMessage(e['responseText'], 'error')
     return
   }

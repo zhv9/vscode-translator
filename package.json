@@ -3,6 +3,8 @@
   "displayName": "vscode-translator",
   "description": "translation extension for vs-code",
   "version": "0.0.1",
+  "publisher": "voldikss",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.37.0"
   },
@@ -10,7 +12,13 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:extension.translate"
+    "onCommand:extension.translateAndShowInStatusBar",
+    "onCommand:extension.translateAndShowInBubble",
+    "onCommand:extension.translateAndShowInOutputChannel",
+    "onCommand:extension.translateAndReplace",
+    "onCommand:extension.translateWithTargetLanguage",
+    "onCommand:extension.translateWithEngine",
+    "onCommand:extension.translateNewWord"
   ],
   "main": "./lib/index.js",
   "contributes": {
@@ -27,13 +35,52 @@
             "bing",
             "ciba"
           ]
+        },
+        "translator.display": {
+          "type": "string",
+          "default": "normal",
+          "enum": [
+            "normal",
+            "bubble",
+            "echo"
+          ],
+          "description": "In which way the translation is displayed"
+        },
+        "translator.hover": {
+          "type": "boolean",
+          "default": false,
+          "description": "show translation on hover"
         }
       }
     },
     "commands": [
       {
-        "command": "extension.translate",
-        "title": "Translate"
+        "command": "extension.translateAndShowInStatusBar",
+        "title": "Translate and Show in Statusbar"
+      },
+      {
+        "command": "extension.translateAndShowInBubble",
+        "title": "Translate and Show in Bubble"
+      },
+      {
+        "command": "extension.translateAndShowInOutputChannel",
+        "title": "Translate and Show in OutputChannel"
+      },
+      {
+        "command": "extension.translateAndReplace",
+        "title": "Translate and Replace"
+      },
+      {
+        "command": "extension.translateWithTargetLanguage",
+        "title": "Translate with Specified Target Language"
+      },
+      {
+        "command": "extension.translateWithEngine",
+        "title": "Translate with Specified Engine"
+      },
+      {
+        "command": "extension.translateNewWord",
+        "title": "Translate a New Word"
       }
     ]
   },
@@ -44,8 +91,8 @@
     "pretest": "yarn run compile"
   },
   "devDependencies": {
-    "@chemzqm/tsconfig": "^0.0.3",
-    "@chemzqm/tslint-config": "^1.0.18",
+    "@voldikss/tsconfig": "^1.0.0",
+    "@voldikss/tslint-config": "^1.0.1",
     "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.12.21",
@@ -56,9 +103,6 @@
     "typescript": "^3.3.1",
     "tslint": "^5.12.1",
     "vscode-test": "^1.0.2",
-    "rimraf": "^2.6.3",
-    "ts-loader": "^6.0.4",
-    "webpack": "^4.35.0",
-    "webpack-cli": "^3.3.5"
+    "ts-loader": "^6.0.4"
   }
 }

@@ -1,15 +1,16 @@
 {
-	"rules": {
-		"no-string-throw": true,
-		"no-unused-expression": true,
-		"no-duplicate-variable": true,
-		"curly": true,
-		"class-name": true,
-		"semicolon": [
-			true,
-			"never"
-		],
-		"triple-equals": true
-	},
-	"defaultSeverity": "warning"
+  "extends": "./node_modules/@voldikss/tslint-config/tslint.json",
+  "rules": {
+    "no-console": false,
+    "no-empty": false,
+    "max-line-length": false,
+    "no-string-throw": true,
+    "no-unused-expression": true,
+    "no-duplicate-variable": true,
+    "curly": true,
+    "class-name": true,
+    "semicolon": [true, "never"],
+    "triple-equals": true
+  },
+  "defaultSeverity": "warning"
 }
