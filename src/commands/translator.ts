@@ -4,8 +4,8 @@ import {
   GoogleAPILanguageMap,
   YoudaoAPILanguageMap
 } from './languages'
-import { md5, request } from './util'
-import { SingleTranslation } from './types'
+import { md5, request } from '../utils'
+import { SingleTranslation } from '../types'
 
 class Translator {
   constructor(public name: string) { }
@@ -13,14 +13,11 @@ class Translator {
 
 class SingleResult implements SingleTranslation {
   public engine: string
-  public paraphrase: string
-  public phonetic: string
-  public explain: string[]
-  constructor() {
-    this.phonetic = ''
-    this.paraphrase = ''
-    this.explain = []
-  }
+  public paraphrase = ''
+  public phonetic = ''
+  public explain = []
+  public status = 0
+  constructor() { }
 }
 
 export class BingTranslator extends Translator {
@@ -46,6 +43,7 @@ export class BingTranslator extends Translator {
     if (!resp) return result
     result.phonetic = this.getPhonetic(resp)
     result.explain = this.getExplain(resp)
+    result.status = 1
     return result
   }
 
@@ -94,9 +92,10 @@ export class CibaTranslator extends Translator {
       return result
     }
 
-    if ('ph_en' in obj['content']) { result.phonetic = `${obj['content']['ph_en']}` }
-    if ('out' in obj['content']) { result.paraphrase = `${obj['content']['out']}` }
-    if ('word_mean' in obj['content']) { result.explain = obj['content']['word_mean'] }
+    if ('ph_en' in obj['content']) result.phonetic = `${obj['content']['ph_en']}`
+    if ('out' in obj['content']) result.paraphrase = `${obj['content']['out']}`
+    if ('word_mean' in obj['content']) result.explain = obj['content']['word_mean']
+    result.status = 1
     return result
   }
 }
@@ -143,6 +142,7 @@ export class GoogleTranslator extends Translator {
     }
     result.paraphrase = this.getParaphrase(obj)
     result.explain = this.getExplain(obj)
+    result.status = 1
     return result
   }
 }
@@ -193,6 +193,7 @@ export class YoudaoTranslator extends Translator {
 
     result.paraphrase = this.getParaphrase(obj)
     result.explain = this.getExplain(obj)
+    result.status = 1
     return result
   }
 

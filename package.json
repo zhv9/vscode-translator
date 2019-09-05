@@ -1,7 +1,7 @@
 {
   "name": "vscode-translator",
   "displayName": "vscode-translator",
-  "description": "translation extension for vs-code",
+  "description": "translation extension for VS Code",
   "version": "0.0.1",
   "publisher": "voldikss",
   "license": "MIT",
@@ -11,14 +11,29 @@
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "translate",
+    "translation",
+    "翻译",
+    "bing",
+    "google",
+    "ciba"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/voldikss/vscode-browser-completion.git"
+  },
   "activationEvents": [
+    "onCommand:extension.translateOnHoverEnable",
+    "onCommand:extension.translateOnHoverDisable",
     "onCommand:extension.translateAndShowInStatusBar",
     "onCommand:extension.translateAndShowInBubble",
     "onCommand:extension.translateAndShowInOutputChannel",
     "onCommand:extension.translateAndReplace",
     "onCommand:extension.translateWithTargetLanguage",
     "onCommand:extension.translateWithEngine",
-    "onCommand:extension.translateNewWord"
+    "onCommand:extension.translateNewWord",
+    "onCommand:extension.translateHistoryExport"
   ],
   "main": "./lib/index.js",
   "contributes": {
@@ -51,10 +66,23 @@
           "type": "boolean",
           "default": false,
           "description": "show translation on hover"
+        },
+        "translator.enableHistory": {
+          "type": "boolean",
+          "default": false,
+          "description": "Save translation to history after translating"
         }
       }
     },
     "commands": [
+      {
+        "command": "extension.translateOnHoverEnable",
+        "title": "Translate onHover Enable"
+      },
+      {
+        "command": "extension.translateOnHoverDisable",
+        "title": "Translate onHover Disable"
+      },
       {
         "command": "extension.translateAndShowInStatusBar",
         "title": "Translate and Show in Statusbar"
@@ -82,6 +110,10 @@
       {
         "command": "extension.translateNewWord",
         "title": "Translate a New Word"
+      },
+      {
+        "command": "extension.translateHistoryExport",
+        "title": "Translate History Export"
       }
     ]
   },
@@ -95,10 +127,12 @@
     "@voldikss/tsconfig": "^1.0.0",
     "@voldikss/tslint-config": "^1.0.1",
     "@types/glob": "^7.1.1",
+    "@types/uuid": "^3.4.4",
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.12.21",
     "@types/vscode": "^1.37.0",
     "glob": "^7.1.4",
+    "uuid": "^3.3.2",
     "mocha": "^6.1.4",
     "request-light": "^0.2.4",
     "typescript": "^3.3.1",

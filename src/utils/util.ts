@@ -1,5 +1,8 @@
-import { xhr, XHROptions } from 'request-light'
 import crypto from 'crypto'
+import path from 'path'
+import { xhr, XHROptions } from 'request-light'
+import { MsgType } from '../types'
+import * as vscode from 'vscode'
 
 export async function request(
   type: string,
@@ -60,4 +63,39 @@ function urlencode(data: object): string {
 
 export function md5(str: string): string {
   return crypto.createHash('md5').update(str).digest('hex')
+}
+
+export function getConfigDir(): string {
+  let configDir: string
+  const platform = process.platform
+  switch (platform) {
+    case 'win32':
+      configDir = path.join(process.env.LOCALAPPDATA || process.env.APPDATA)
+      break
+    case 'darwin':
+      configDir = path.join(process.env.HOME, 'Library')
+      break
+    case 'linux':
+      configDir = path.join(process.env.HOME, '.config')
+      break
+    default:
+      break
+  }
+  return configDir
+}
+
+export function showMessage(message: string, type?: MsgType): void {
+  switch (type) {
+    case 'info':
+      vscode.window.showInformationMessage(message)
+      break
+    case 'warning':
+      vscode.window.showWarningMessage(message)
+      break
+    case 'error':
+      vscode.window.showErrorMessage(message)
+      break
+    default:
+      break
+  }
 }

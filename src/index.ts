@@ -1,22 +1,64 @@
-import { Translation } from './types'
+import path from 'path'
+import * as vscode from 'vscode'
 import {
   BingTranslator,
   CibaTranslator,
+  Display,
+  GoogleAPILanguageMap,
   GoogleTranslator,
-  YoudaoTranslator
-} from './translator'
-import { Display } from './display'
-import * as vscode from 'vscode'
-import { GoogleAPILanguageMap } from './languages'
+  YoudaoTranslator,
+  History
+} from './commands'
+import { Translation, SingleTranslation } from './types'
+import { statAsync, mkdirAsync, DB } from './utils'
+import { getConfigDir, showMessage } from './utils/util'
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const { subscriptions } = context
 
   const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('translator')
-  let engines = config.get<string[]>('engines', ['ciba', 'google'])
+  let engines = config.get<string[]>('engines', ['ciba', 'bing'])
   let toLang = config.get<string>('toLang', 'Chinese')
+  let translateOnHover = config.get<boolean>('translateOnHover', false)
+  let enableHistory = config.get<boolean>('enableHistory', false)
+
+  const configDir = getConfigDir()
+  const storagePath = path.join(configDir, 'vscode-browser-completion')
+  const stat = await statAsync(storagePath)
+  if (!stat || !stat.isDirectory()) {
+    await mkdirAsync(storagePath)
+  }
 
   const displayer = new Display()
+  const db = new DB(storagePath, 5000)
+  const history = new History(db, enableHistory)
+
+  subscriptions.push(
+    vscode.languages.registerHoverProvider(['*'], {
+      async provideHover(document, position, _token): Promise<vscode.Hover> {
+        if (!translateOnHover) return
+        const text = getText(document, position)
+        const trans = await translate(text, engines, toLang)
+        if (!trans) return
+        const contents = displayer.buildForFloatingWindow(trans)
+        return new vscode.Hover(contents)
+      }
+    })
+  )
+
+  subscriptions.push(
+    vscode.commands.registerCommand(
+      'extension.translateOnHoverEnable',
+      () => translateOnHover = true
+    )
+  )
+
+  subscriptions.push(
+    vscode.commands.registerCommand(
+      'extension.translateOnHoverDisable',
+      () => translateOnHover = false
+    )
+  )
 
   subscriptions.push(
     vscode.commands.registerCommand(
@@ -24,8 +66,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       async () => {
         const text = getText()
         const trans = await translate(text, engines, toLang)
-        if (!trans) { return }
+        if (!trans) return
         await displayer.showInStatusBar(trans)
+        await history.save(trans)
       }
     )
   )
@@ -36,8 +79,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       async () => {
         const text = getText()
         const trans = await translate(text, engines, toLang)
-        if (!trans) { return }
+        if (!trans) return
         await displayer.showInBubble(trans)
+        await history.save(trans)
       }
     )
   )
@@ -48,8 +92,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       async () => {
         const text = getText()
         const trans = await translate(text, engines, toLang)
-        if (!trans) { return }
+        if (!trans) return
         await displayer.showInOutputChannel(trans)
+        await history.save(trans)
       }
     )
   )
@@ -60,8 +105,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       async () => {
         const text = getText()
         const trans = await translate(text, engines, toLang)
-        if (!trans) { return }
+        if (!trans) return
         await displayer.replaceWord(trans)
+        await history.save(trans)
       }
     )
   )
@@ -75,8 +121,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         vscode.window.showQuickPick(languages, { placeHolder: "select a target language" })
           .then(async toLang => {
             const trans = await translate(text, engines, toLang)
-            if (!trans) { return }
+            if (!trans) return
             await displayer.showInOutputChannel(trans)
+            await history.save(trans)
           })
       }
     )
@@ -91,8 +138,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         vscode.window.showQuickPick(engineSet, { canPickMany: true })
           .then(async engines => {
             const trans = await translate(text, engines, toLang)
-            if (!trans) { return }
+            if (!trans) return
             await displayer.showInOutputChannel(trans)
+            await history.save(trans)
           })
       }
     )
@@ -104,37 +152,55 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       async () => {
         vscode.window.showInputBox({ placeHolder: "input a word" }).then(async text => {
           const trans = await translate(text, engines, toLang)
-          if (!trans) { return }
+          if (!trans) return
           await displayer.showInOutputChannel(trans)
+          await history.save(trans)
         })
       }
     )
   )
+
+  subscriptions.push(
+    vscode.commands.registerCommand(
+      'extension.translateHistoryExport',
+      async () => await history.export()
+    )
+  )
 }
 
-function getText(): string {
+function getText(document?: vscode.TextDocument, position?: vscode.Position): string {
   const editor = vscode.window.activeTextEditor
-  if (!editor) {
-    return
-  }
+  if (!editor) return
 
-  const { document } = editor
-  let text: string
+  if (!document) document = editor.document
+
+  let text = ''
+  let range: vscode.Range
   const selection = editor.selection
   if (selection.isEmpty) {
-    const cursorPos = editor.selection.active
-    const currentWordRange = document.getWordRangeAtPosition(cursorPos)
-    text = document.getText(currentWordRange)
+    // no selection or hover position, select current word
+    if (!position) position = editor.selection.active
+    range = document.getWordRangeAtPosition(position)
   } else {
-    text = document.getText(selection)
+    // has selection, no hover position
+    if (!position) {
+      range = new vscode.Range(selection.start, selection.end)
+    } else {
+      // if hover position is in the selection area
+      if (selection.anchor.line === position.line
+        && position.character >= selection.start.character
+        && position.character <= selection.end.character) {
+        range = new vscode.Range(selection.start, selection.end)
+      } else {
+        // hover position is not in the selection area
+        range = document.getWordRangeAtPosition(position)
+      }
+    }
   }
-
-  if (text.trim() !== '') {
-    return text
-  } else {
-    vscode.window.showWarningMessage("Empty word")
-    return null
-  }
+  text = document.getText(range)
+  if (text.trim() !== '') return text
+  showMessage('Empty word')
+  return null
 }
 
 export async function translate(
@@ -142,9 +208,7 @@ export async function translate(
   engines: string[],
   toLang: string,
 ): Promise<Translation | void> {
-  if (!text) {
-    return
-  }
+  if (!text || text.trim() === '') return
 
   const ENGINES = {
     bing: BingTranslator,
@@ -160,15 +224,18 @@ export async function translate(
   })
 
   return Promise.all(translatePromises)
-    .then(results => {
+    .then((results: SingleTranslation[]) => {
+      results = results.filter(result => {
+        return result.status === 1 &&
+          !(result.explain.length === 0 && result.paraphrase === '')
+      })
       return {
         text,
-        results,
-        status: 1
+        results
       } as Translation
     })
     .catch(_e => {
-      vscode.window.showWarningMessage("Translation failed")
+      showMessage('Translation failed', 'error')
       return
     })
 }
