@@ -1,4 +1,3 @@
-import { configure, xhr, XHROptions } from 'request-light'
 import fs from 'fs'
 import util from 'util'
 
@@ -16,7 +15,7 @@ export async function writeFileAsync(fullpath: string, content: string): Promise
   await util.promisify(fs.writeFile)(fullpath, content, 'utf8')
 }
 
-export function readFileAsync(fullpath: string, encoding = 'utf8'): Promise<string> {
+export async function readFileAsync(fullpath: string, encoding = 'utf8'): Promise<string> {
   return new Promise((resolve, reject) => {
     fs.readFile(fullpath, encoding, (err, content) => {
       if (err) reject(err)
@@ -25,7 +24,7 @@ export function readFileAsync(fullpath: string, encoding = 'utf8'): Promise<stri
   })
 }
 
-export function mkdirAsync(filepath: string): Promise<void> {
+export async function mkdirAsync(filepath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     fs.mkdir(filepath, err => {
       if (err) return reject(err)

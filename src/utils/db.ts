@@ -1,7 +1,6 @@
 import { statAsync, writeFileAsync, readFileAsync } from './io'
 import { HistoryItem } from '../types'
 import path from 'path'
-import uuid = require('uuid/v1')
 
 export class DB {
   private file: string
@@ -17,26 +16,17 @@ export class DB {
     return JSON.parse(content) as HistoryItem[]
   }
 
-  public async add(content: string[]): Promise<void> {
+  public async add(content: HistoryItem): Promise<void> {
     let items = await this.load()
     if (items.length === this.maxsize) {
       items.pop()
     }
 
     // check duplication
-    let arr = items.map(item => item['content'][0].toLowerCase())
+    let arr = items.map(item => item[0].toLowerCase())
     if (arr.indexOf(content[0].toLowerCase()) >= 0) return
 
-    items.unshift({ id: uuid(), content })
+    items.unshift(content)
     await writeFileAsync(this.file, JSON.stringify(items, null, 2))
-  }
-
-  public async delete(uid: string): Promise<void> {
-    let items = await this.load()
-    let idx = items.findIndex(o => o.id === uid)
-    if (idx !== -1) {
-      items.splice(idx, 1)
-      await writeFileAsync(this.file, JSON.stringify(items, null, 2))
-    }
   }
 }

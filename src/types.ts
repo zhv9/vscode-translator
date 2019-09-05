@@ -1,4 +1,5 @@
 export declare type MsgType = 'info' | 'warning' | 'error'
+export declare type HistoryItem = [string, string]
 /**
  * Single translation from one engine
  *
@@ -23,9 +24,4 @@ export interface SingleTranslation {
 export interface Translation {
   text: string
   results: SingleTranslation[]
-}
-
-export interface HistoryItem {
-  id: string
-  content: string[]
 }

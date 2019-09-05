@@ -1,17 +1,17 @@
-import path from 'path'
-import * as vscode from 'vscode'
 import {
+  Display,
+  History,
+  GoogleAPILanguageMap,
   BingTranslator,
   CibaTranslator,
-  Display,
-  GoogleAPILanguageMap,
   GoogleTranslator,
-  YoudaoTranslator,
-  History
+  YoudaoTranslator
 } from './commands'
+import path from 'path'
+import * as vscode from 'vscode'
 import { Translation, SingleTranslation } from './types'
-import { statAsync, mkdirAsync, DB } from './utils'
-import { getConfigDir, showMessage } from './utils/util'
+import { statAsync, getConfigDir, mkdirAsync, DB } from './utils'
+import { showMessage } from './utils/util'
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const { subscriptions } = context
@@ -23,7 +23,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   let enableHistory = config.get<boolean>('enableHistory', false)
 
   const configDir = getConfigDir()
-  const storagePath = path.join(configDir, 'vscode-browser-completion')
+  const storagePath = path.join(configDir, 'vscode-translator')
   const stat = await statAsync(storagePath)
   if (!stat || !stat.isDirectory()) {
     await mkdirAsync(storagePath)
@@ -199,7 +199,7 @@ function getText(document?: vscode.TextDocument, position?: vscode.Position): st
   }
   text = document.getText(range)
   if (text.trim() !== '') return text
-  showMessage('Empty word')
+  showMessage('Empty word', 'warning')
   return null
 }
 

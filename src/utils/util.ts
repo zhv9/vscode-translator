@@ -1,8 +1,8 @@
 import crypto from 'crypto'
 import path from 'path'
 import { xhr, XHROptions } from 'request-light'
-import { MsgType } from '../types'
 import * as vscode from 'vscode'
+import { MsgType } from '../types'
 
 export async function request(
   type: string,
@@ -53,6 +53,7 @@ export async function request(
     // showMessage(e['responseText'], 'error')
     return
   }
+  return null
 }
 
 function urlencode(data: object): string {

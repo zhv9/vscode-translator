@@ -125,21 +125,22 @@
     "pretest": "yarn run compile"
   },
   "devDependencies": {
-    "@voldikss/tsconfig": "^1.0.0",
-    "@voldikss/tslint-config": "^1.0.1",
     "@types/glob": "^7.1.1",
-    "@types/uuid": "^3.4.4",
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.12.21",
     "@types/vscode": "^1.37.0",
+    "@voldikss/tsconfig": "^1.0.0",
+    "@voldikss/tslint-config": "^1.0.1",
     "glob": "^7.1.4",
-    "uuid": "^3.3.2",
     "mocha": "^6.1.4",
     "request-light": "^0.2.4",
-    "typescript": "^3.3.1",
+    "ts-loader": "^6.0.4",
     "tslint": "^5.12.1",
-    "vscode-test": "^1.0.2",
-    "ts-loader": "^6.0.4"
+    "typescript": "^3.3.1",
+    "vscode-test": "^1.0.2"
+  },
+  "dependencies": {
+    "request-light": "^0.2.4"
   },
   "__metadata": {
     "id": "8c59aa21-9025-45ee-b633-d0b11fe72afa",
@@ -147,4 +148,3 @@
     "publisherId": "49c5a1ac-e071-4b82-bd17-ec76a5dac3c6"
   }
 }
-

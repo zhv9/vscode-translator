@@ -4,7 +4,7 @@ import {
   GoogleAPILanguageMap,
   YoudaoAPILanguageMap
 } from './languages'
-import { md5, request } from '../utils'
+import { md5, request } from '../utils/util'
 import { SingleTranslation } from '../types'
 
 class Translator {
