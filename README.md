@@ -49,7 +49,9 @@ VS Code 翻译插件，移植自 [coc-translator](https://github.com/voldikss/co
 | 谷歌                 | 可         | 否             |
 | 有道(not usable yet) | 可         | 否             |
 
-## 命令
+## Credits
+
+<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
 
 ## License
 

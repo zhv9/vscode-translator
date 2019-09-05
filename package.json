@@ -2,7 +2,8 @@
   "name": "vscode-translator",
   "displayName": "vscode-translator",
   "description": "translation extension for VS Code",
-  "version": "0.0.1",
+  "icon": "images/language.png",
+  "version": "0.0.2",
   "publisher": "voldikss",
   "license": "MIT",
   "engines": {
@@ -139,5 +140,11 @@
     "tslint": "^5.12.1",
     "vscode-test": "^1.0.2",
     "ts-loader": "^6.0.4"
+  },
+  "__metadata": {
+    "id": "8c59aa21-9025-45ee-b633-d0b11fe72afa",
+    "publisherDisplayName": "Yunzhi Duan",
+    "publisherId": "49c5a1ac-e071-4b82-bd17-ec76a5dac3c6"
   }
 }
+
