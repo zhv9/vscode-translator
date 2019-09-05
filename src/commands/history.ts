@@ -8,7 +8,6 @@ export class History {
 
   public async save(trans: Translation): Promise<void> {
     if (!this.enableHistory) {
-      showMessage('History feature was not enabled', 'warning')
       return
     }
     let text: string = trans.text
