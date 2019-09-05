@@ -22,7 +22,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/voldikss/vscode-browser-completion.git"
+    "url": "https://github.com/voldikss/vscode-translator.git"
   },
   "activationEvents": [
     "onCommand:extension.translateOnHoverEnable",
