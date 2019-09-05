@@ -25,10 +25,6 @@
     "configurations": {
       "type": "object",
       "properties": {
-        "translator.toLang": {
-          "type": "string",
-          "default": "zh"
-        },
         "translator.engines": {
           "type": "array",
           "default": [
@@ -36,17 +32,22 @@
             "ciba"
           ]
         },
-        "translator.display": {
+        "translator.toLang": {
           "type": "string",
-          "default": "normal",
+          "default": "Chinese",
           "enum": [
-            "normal",
-            "bubble",
-            "echo"
-          ],
-          "description": "In which way the translation is displayed"
+            "Chinese",
+            "English",
+            "Japanese",
+            "Spanish",
+            "French",
+            "German",
+            "Italian",
+            "Korean",
+            "Russian"
+          ]
         },
-        "translator.hover": {
+        "translator.translateOnHover": {
           "type": "boolean",
           "default": false,
           "description": "show translation on hover"

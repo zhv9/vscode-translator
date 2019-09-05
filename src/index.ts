@@ -1,14 +1,20 @@
 import { Translation } from './types'
-import { BingTranslator, CibaTranslator, GoogleTranslator, YoudaoTranslator } from './translator'
-import * as vscode from 'vscode'
+import {
+  BingTranslator,
+  CibaTranslator,
+  GoogleTranslator,
+  YoudaoTranslator
+} from './translator'
 import { Display } from './display'
+import * as vscode from 'vscode'
+import { GoogleAPILanguageMap } from './languages'
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const { subscriptions } = context
 
   const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('translator')
   let engines = config.get<string[]>('engines', ['ciba', 'google'])
-  let toLang = config.get<string>('toLang', 'zh')
+  let toLang = config.get<string>('toLang', 'Chinese')
 
   const displayer = new Display()
 
@@ -65,11 +71,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       'extension.translateWithTargetLanguage',
       async () => {
         const text = getText()
-        vscode.window.showInputBox({ placeHolder: "input a target language shortcut" }).then(async toLang => {
-          const trans = await translate(text, engines, toLang)
-          if (!trans) { return }
-          await displayer.showInOutputChannel(trans)
-        })
+        const languages = [...GoogleAPILanguageMap.keys()]
+        vscode.window.showQuickPick(languages, { placeHolder: "select a target language" })
+          .then(async toLang => {
+            const trans = await translate(text, engines, toLang)
+            if (!trans) { return }
+            await displayer.showInOutputChannel(trans)
+          })
       }
     )
   )

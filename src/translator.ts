@@ -1,5 +1,11 @@
+import {
+  BingAPILanguageMap,
+  CibaAPILanguageMap,
+  GoogleAPILanguageMap,
+  YoudaoAPILanguageMap
+} from './languages'
 import { md5, request } from './util'
-import { Translation, SingleTranslation } from './types'
+import { SingleTranslation } from './types'
 
 class Translator {
   constructor(public name: string) { }
@@ -21,10 +27,13 @@ export class BingTranslator extends Translator {
   constructor(name: string) { super(name) }
 
   public async translate(text: string, toLang: string): Promise<SingleTranslation> {
+    const result = new SingleResult()
+    result.engine = this.name
+
+    const tl = BingAPILanguageMap.get(toLang)
+    if (tl === undefined) return result
     let url = 'http://bing.com/dict/SerpHoverTrans'
-    if (/^zh/.test(toLang)) {
-      url = 'http://cn.bing.com/dict/SerpHoverTrans'
-    }
+    if (/^zh/.test(tl)) url = 'http://cn.bing.com/dict/SerpHoverTrans'
     url += '?q=' + encodeURI(text)
 
     const headers = {
@@ -34,10 +43,7 @@ export class BingTranslator extends Translator {
     }
 
     const resp = await request('GET', url, null, headers, 'document')
-    if (!resp) { return }
-
-    const result = new SingleResult()
-    result.engine = this.name
+    if (!resp) return result
     result.phonetic = this.getPhonetic(resp)
     result.explain = this.getExplain(resp)
     return result
@@ -70,26 +76,27 @@ export class CibaTranslator extends Translator {
   constructor(name: string) { super(name) }
 
   public async translate(text: string, toLang: string): Promise<SingleTranslation> {
-    const url = `https://fy.iciba.com/ajax.php`
+    const result = new SingleResult()
+    result.engine = this.name
 
+    const tl = CibaAPILanguageMap.get(toLang)
+    if (tl === undefined) return result
+    const url = `https://fy.iciba.com/ajax.php`
     const data = {}
     data['a'] = 'fy'
     data['w'] = text
     data['f'] = 'auto'
-    data['t'] = toLang
+    data['t'] = tl
     const obj = await request('GET', url, data)
 
     if (!obj || !('status' in obj)) {
       console.log("HTTP request failed", 'error')
-      return
+      return result
     }
 
-    const result = new SingleResult()
-    result.engine = this.name
     if ('ph_en' in obj['content']) { result.phonetic = `${obj['content']['ph_en']}` }
     if ('out' in obj['content']) { result.paraphrase = `${obj['content']['out']}` }
     if ('word_mean' in obj['content']) { result.explain = obj['content']['word_mean'] }
-
     return result
   }
 }
@@ -118,24 +125,24 @@ export class GoogleTranslator extends Translator {
   }
 
   public async translate(text: string, toLang: string): Promise<SingleTranslation> {
-    let host = 'translate.googleapis.com'
-    if (/^zh/.test(toLang)) { host = 'translate.google.cn' }
+    const result = new SingleResult()
+    result.engine = this.name
 
-    const url = `https://${host}/translate_a/single?client=gtx&sl=auto&tl=${toLang}` +
+    const tl = GoogleAPILanguageMap.get(toLang)
+    if (tl === undefined) return result
+    let host = 'translate.googleapis.com'
+    if (/^zh/.test(tl)) { host = 'translate.google.cn' }
+
+    const url = `https://${host}/translate_a/single?client=gtx&sl=auto&tl=${tl}` +
       `&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&q=${encodeURI(text)}`
 
     const obj = await request('GET', url)
-
     if (!obj) {
       console.log("HTTP request failed", 'error')
-      return
+      return result
     }
-
-    const result = new SingleResult()
-    result.engine = this.name
     result.paraphrase = this.getParaphrase(obj)
     result.explain = this.getExplain(obj)
-
     return result
   }
 }
@@ -147,13 +154,18 @@ export class YoudaoTranslator extends Translator {
   constructor(name: string) { super(name) }
 
   public async translate(text: string, toLang: string): Promise<SingleTranslation> {
+    const result = new SingleResult()
+    result.engine = this.name
+
+    const tl = YoudaoAPILanguageMap.get(toLang)
+    if (tl === undefined) return result
     const url = 'https://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule'
     const salt = new Date().getTime()
     const sign = md5("fanyideskweb" + text + salt + 'ebSeFb%=XZ%T[KZ)c(sy!')
     const data = {
       i: text,
       from: 'auto',
-      to: toLang,
+      to: tl,
       smartresult: 'dict',
       client: 'fanyideskweb',
       salt,
@@ -169,22 +181,19 @@ export class YoudaoTranslator extends Translator {
       Referer: 'http://fanyi.youdao.com/',
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; rv:51.0) Gecko/20100101 Firefox/51.0',
     }
-
     const obj = await request('POST', url, data, headers)
 
     if (!obj) {
       console.log("HTTP request failed", 'error')
-      return
+      return result
     } else if ('errorCode' in obj) {
       console.log('errorCode' + obj['errorCode'])
-      return
+      return result
     }
 
-    const result = new SingleResult()
-    result.engine = this.name
     result.paraphrase = this.getParaphrase(obj)
     result.explain = this.getExplain(obj)
-    return result as SingleTranslation
+    return result
   }
 
   private getParaphrase(obj: object): string {

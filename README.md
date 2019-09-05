@@ -1,107 +1,54 @@
-# coc-translator
+# vscode-translator
 
-Translation extension for [coc.nvim](https://github.com/neoclide/coc.nvim)
+VS Code 翻译插件，移植自 [coc-translator](https://github.com/voldikss/coc-translator)
 
-Inspired by [vim-translate-me](https://github.com/voldikss/vim-translate-me)
+## 功能介绍 & 使用说明
 
-[![Build Status](https://travis-ci.org/voldikss/coc-translator.svg?branch=master)](https://travis-ci.org/voldikss/coc-translator)
+- 选中要翻译的部分，执行翻译命令
 
-## Install
+- 执行翻译命令时，如果未选中单词，默认翻译光标下的单词
 
-```
-:CocInstall coc-translator
-```
+- 可以同时使用多个翻译接口
 
-## Features
+- 可以保存并查看历史记录
 
-- Multiple translator engines
-- Export translation history
-- View and process translation history via CocList
-- Proxy support(see [coc.txt](https://github.com/neoclide/coc.nvim/blob/master/doc/coc.txt#L113-L119))
+- 悬停翻译(由于使用的非官方接口，所以此功能默认关闭，可手动打开)
 
-## Configuration
+- 翻译替换
 
-- `translator.toLang`: Target language, default: `'zh'`
-- `translator.engines`: Translation engines, default: `['bing', 'ciba', 'google']`
-- `translator.maxsize`: Max count of history items, default: 5000
+### Configurations
 
-more information, see [package.json](https://github.com/voldikss/coc-translator/blob/master/package.json)
+| 设置                          | 可选值                                                                                          | 默认值             | 说明                                        |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------- |
+| `translator.engines`          | `bing`, `ciba`, `google`                                                                        | `['bing', 'ciba']` | 默认使用的翻译接口，必须是 `array` 形式的值 |
+| `translator.toLang`           | `Chinese`, `English`, `Spanish`, `Japanese`, `Italian`, `Korean`, `French`, `German`, `Russian` | `Chinese`          | 默认的目标语言                              |
+| `translator.translateOnHover` | `true`, `false`                                                                                 | `false`            | 鼠标悬停于单词上方时进行翻译                |
 
-## Engines
+### Commands
 
-| engine                 | needs id/key | supported languages |
-| ---------------------- | ------------ | ------------------- |
-| bing                   | no           | [language list][1]  |
-| ciba                   | no           | [language list][2]  |
-| google                 | no           | [language list][3]  |
-| youdao(not usable yet) | no           | [language list][4]  |
+| 命令                                       | 说明                           |
+| ------------------------------------------ | ------------------------------ |
+| `Translate and Show in Statusbar`          | 翻译并在状态栏显示             |
+| `Translate and Show in Bubble`             | 翻译并在右下角弹出             |
+| `Translate and Show in OutputChannel`      | 翻译并在 OutputChannel 显示    |
+| `Translate and Replace`                    | 翻译并用翻译结果替换当前词     |
+| `Translate with Specified Target Language` | 指定目标语言翻译               |
+| `Translate with Specified Engine`          | 使用指定的几个翻译接口进行翻译 |
+| `Translate a New Word`                     | 输入一个单词并翻译             |
 
-## Keymaps
+## 翻译接口
 
-Example
+| 接口                 | 国内直连？ | 需要 id/key ？ |
+| -------------------- | ---------- | -------------- |
+| 必应                 | 可         | 否             |
+| 词霸                 | 可         | 否             |
+| 谷歌                 | 可         | 否             |
+| 有道(not usable yet) | 可         | 否             |
 
-```vim
-" popup
-nmap <Leader>t <Plug>(coc-translator-p)
-" echo
-nmap <Leader>e <Plug>(coc-translator-e)
-" replace
-nmap <Leader>r <Plug>(coc-translator-r)
-```
-
-## Commands
-
-- `:CocCommand translator.popup [text]` Display translation result via floating/popup window
-- `:CocCommand translator.echo [text]` Echo the translation result in the cmdline
-- `:CocCommand translator.replace [text]` Replace the word under the cursor with the translation
-- `:CocCommand translator.exportHistory` Export translation history in the tabpage
-
-**Note:** `[text]` is optional, if no `text`, the extension will use the `<word>` under the cursor.
-
-## Work with translation lists
-
-run `:CocList translation` to open the translation list.
-
-- Filter your translation items and perform operations via `<Tab>`
-- Use operation `delete` to delete the translation item under the cursor
-- Use operation `yank` to yank ...
-- Use operation `open` to open the file which contains the query word
-- Use operation `preview` to preview ...
-- Use operation `append` to append the word to the end of cursor position
-- Use operation `pretend` to pretend ...
-
-For more advance usage, checkout `:h coc-list`
-
-## F.A.Q
-
-Q: Where are the translation data stored?
-
-A: Normally the data is saved in `~/.config/coc/extensions/coc-translation-data`, but if you set `g:coc_extension_root` to another location, it will change as well
+## 命令
 
 ## License
 
 MIT
 
 ## Screenshots
-
-![](https://user-images.githubusercontent.com/20282795/62059151-43256800-b255-11e9-914d-ece4addc5e7c.png)
-![](https://user-images.githubusercontent.com/20282795/60385979-6b893d80-9ac2-11e9-821f-c656dd38c9fa.png)
-![](https://user-images.githubusercontent.com/20282795/60385982-6f1cc480-9ac2-11e9-8519-448c6d9c77e4.png)
-![](https://user-images.githubusercontent.com/20282795/60385983-704df180-9ac2-11e9-9912-96f302f66474.png)
-
-[1]: https://github.com/voldikss/vim-translate-me/wiki/bing-api
-[2]: https://github.com/voldikss/vim-translate-me/wiki/Ciba-api
-[3]: https://github.com/voldikss/vim-translate-me/wiki/Google-api
-[4]: https://github.com/voldikss/vim-translate-me/wiki/Youdao-api
-
-
-## Donation
-
-- Paypal
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://paypal.me/voldikss)
-
-- Wechat
-<div>
-	<img src="https://user-images.githubusercontent.com/20282795/62786670-a933aa00-baf5-11e9-9941-6d2551758faa.jpg" width=400>
-</div>

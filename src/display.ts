@@ -9,7 +9,7 @@ export class Display {
       content.push(' ')
       content.push(`------ ${t.engine} ------`)
       if (t.phonetic) { content.push(`🔉 [${t.phonetic}]`) }
-      if (t.paraphrase) { content.push(`🌀 ${t.paraphrase}`) }
+      if (t.paraphrase) { content.push(`📕 ${t.paraphrase}`) }
       if (t.explain.length) { content.push(...t.explain.map((i: string) => "📝 " + i)) }
     }
 
