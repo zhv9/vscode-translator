@@ -49,15 +49,7 @@ VS Code 翻译插件，移植自 [coc-translator](https://github.com/voldikss/co
 | 谷歌                 | 可         | 否             |
 | 有道(not usable yet) | 可         | 否             |
 
-## Credits
-
-<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
-
-## License
-
-MIT
-
-## Screenshots
+## 演示
 
 <div>
     <img src="https://user-images.githubusercontent.com/20282795/64344334-d3a75300-d020-11e9-98e4-8de382fc2b0d.png" width=800>
@@ -66,3 +58,23 @@ MIT
     <img src="https://user-images.githubusercontent.com/20282795/64344394-ef125e00-d020-11e9-97fa-4b72c7440bcc.gif" width=800>
     <img src="https://user-images.githubusercontent.com/20282795/64344336-d4d88000-d020-11e9-88c9-c96983c3e4c2.png" width=800>
 </div>
+
+## Credits
+
+<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
+
+## Donation
+
+- Paypal
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://paypal.me/voldikss)
+
+- Wechat Pay
+
+<div>
+<img src="https://user-images.githubusercontent.com/20282795/64410950-b3c66c80-d0be-11e9-8500-973382366324.jpg" width=150>
+</div>
+
+## License
+
+MIT
