@@ -3,7 +3,7 @@
   "displayName": "vscode-translator",
   "description": "translation extension for VS Code",
   "icon": "images/language.png",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "voldikss",
   "license": "MIT",
   "engines": {
